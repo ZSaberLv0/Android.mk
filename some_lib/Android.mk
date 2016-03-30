@@ -36,9 +36,8 @@ ZF_LOAD_SHARED_LIB      =
 
 #============================================================
 # LOCAL_PATH need be set only once, before any other code,
-# in top-level Android.mk only
 #============================================================
-LOCAL_PATH := $(call my-dir)
+#LOCAL_PATH := $(call my-dir)
 
 #============================================================
 # other custom settings
@@ -76,12 +75,13 @@ LOCAL_PATH := $(call my-dir)
 #     and set SRCDIRS to "jni\some_path\my_lib",
 #     then ndk-build
 ifeq ($(OS),Windows_NT)
-_zf_ls = $(shell dir $(subst /,\,$(1)) /a-d /b /s)
+_zf_ls_win = ../$(subst \,/,$(1))/$(subst \,/,$(subst $(abspath $(1))/,,$(2)))
+_zf_ls = $(foreach file,$(shell dir $(subst /,\,$(1)) /a-d /b /s),$(call _zf_ls_win,$(subst \,/,$(1)),$(subst \,/,$(file))))
 else
 _zf_ls = $(shell find $(1) -type f)
 endif
 _zf_find_src_files = $(subst \,/,$(filter %.$(2),$(call _zf_ls, $(1))))
-zf_find_src_files = $(foreach srcdir,$(1),$(foreach srcext,$(2),$(call _zf_find_src_files,$(subst \,/,$(srcdir)),$(srcext))))
+zf_find_src_files = $(foreach file,$(foreach srcdir,$(1),$(foreach srcext,$(2),$(call _zf_find_src_files,$(subst \,/,$(srcdir)),$(srcext)))),../$(file))
 #============================================================
 
 include $(CLEAR_VARS)
@@ -91,6 +91,8 @@ LOCAL_C_INCLUDES := $(ZF_INCLUDES)
 LOCAL_SRC_FILES := $(call zf_find_src_files,$(ZF_SRC_DIRS),$(ZF_SRC_EXTS))
 LOCAL_CFLAGS := $(ZF_CFLAGS)
 LOCAL_LDLIBS := $(ZF_LFLAGS)
+
+#LOCAL_SHORT_COMMANDS = true
 
 LOCAL_STATIC_LIBRARIES := $(ZF_LOAD_STATIC_LIB)
 LOCAL_SHARED_LIBRARIES := $(ZF_LOAD_SHARED_LIB)
