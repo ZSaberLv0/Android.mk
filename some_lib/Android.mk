@@ -75,7 +75,7 @@ ZF_LOAD_SHARED_LIB      =
 #     and set SRCDIRS to "jni\some_path\my_lib",
 #     then ndk-build
 ifeq ($(OS),Windows_NT)
-_zf_ls_win = ../$(subst \,/,$(1))/$(subst \,/,$(subst $(abspath $(1))/,,$(2)))
+_zf_ls_win = ../$(subst \,/,$(1))$(subst \,/,$(subst $(abspath $(1)),,$(2)))
 _zf_ls = $(foreach file,$(shell dir $(subst /,\,$(1)) /a-d /b /s),$(call _zf_ls_win,$(subst \,/,$(1)),$(subst \,/,$(file))))
 else
 _zf_ls = $(shell find $(1) -type f)
