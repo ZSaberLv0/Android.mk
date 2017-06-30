@@ -10,8 +10,8 @@ ZF_MODULE_NAME          = module_name
 # set to "jni" to search whole project_path/jni path
 # support relative path
 # path must not contain spaces
+# path must use '/' as path separator
 # may contain more than one directories, separated by space
-# use '\' or '/' as path separator
 ZF_SRC_DIRS             = jni
 
 # source extensions, separated by space
@@ -24,10 +24,10 @@ ZF_BUILD_SHARED         = true
 ZF_INCLUDES             = 
 
 # compiler flags
-ZF_CFLAGS               = 
+ZF_CFLAGS               = -Os
 
 # linker flags
-ZF_LFLAGS               = -llog
+ZF_LFLAGS               = -landroid -llog
 
 # third-party libs to load
 ZF_LOAD_STATIC_LIB      = 
@@ -35,7 +35,7 @@ ZF_LOAD_SHARED_LIB      =
 
 
 #============================================================
-# LOCAL_PATH need be set only once, before any other code,
+# LOCAL_PATH set only once, before any other code
 #============================================================
 #LOCAL_PATH := $(call my-dir)
 
@@ -76,7 +76,7 @@ ZF_LOAD_SHARED_LIB      =
 #     then ndk-build
 ifeq ($(OS),Windows_NT)
 _zf_ls_win = ../$(subst \,/,$(1))$(subst \,/,$(subst $(abspath $(1)),,$(2)))
-_zf_ls = $(foreach file,$(shell dir $(subst /,\,$(1)) /a-d /b /s),$(call _zf_ls_win,$(subst \,/,$(1)),$(subst \,/,$(file))))
+_zf_ls = $(foreach file,$(shell dir $(subst /,\,$(1)) /a-d /b /s 2>nul),$(call _zf_ls_win,$(subst \,/,$(1)),$(subst \,/,$(file))))
 else
 _zf_ls = $(shell find $(1) -type f)
 endif
